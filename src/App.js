@@ -13,6 +13,7 @@ class App extends Component {
       show: false,
       dataPost: { id: 0, judul: "", catatan: "", tanggal: "" },
       edit: false,
+      q: ""
     }
 
     this.handleChange = this.handleChange.bind(this);
@@ -97,14 +98,18 @@ class App extends Component {
   }
 
   handleSearch(e) {
-
+    axios.get(`http://localhost:3004/posts?q=${this.state.q}`).then((res) => {
+      this.setState({
+        dataApi: res.data,
+      });
+    });
+    e.preventDefault();
   }
 
   reloadData() {
     axios.get('http://localhost:3004/posts').then((res) => {
       this.setState({
         dataApi: res.data,
-        filterData: res.data
       });
     });
   }
@@ -164,8 +169,8 @@ class App extends Component {
         {/* Navigasi bar */}
         <Navbar bg="dark" variant="dark" sticky="top">
           <Navbar.Brand href="#home" className="mr-auto">MyCatatan</Navbar.Brand>
-          <Form inline>
-            <FormControl type="text" placeholder="Cari catatan" className="mr-sm-2" onChange={(e) => this.handleSearch(e)} />
+          <Form inline onSubmit={this.handleSearch}>
+            <FormControl type="text" placeholder="Cari catatan" className="mr-sm-2" onChange={(e) => this.setState({ q: e.target.value })} />
           </Form>
         </Navbar>
 
